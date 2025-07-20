@@ -1,0 +1,1312 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Community Cricket Predictions</title>
+    <style>
+        :root {
+            --primary-color: #1e40af;
+            --secondary-color: #f59e0b;
+            --accent-color: #10b981;
+            --dark-color: #1f2937;
+            --light-color: #f3f4f6;
+            --success-color: #10b981;
+            --warning-color: #f59e0b;
+            --danger-color: #ef4444;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background-color: #f5f5f5;
+            color: var(--dark-color);
+            line-height: 1.6;
+        }
+
+        header {
+            background: linear-gradient(135deg, var(--primary-color), #1e3a8a);
+            color: white;
+            padding: 2rem 0;
+            text-align: center;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        .header-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 2rem;
+        }
+
+        h1 {
+            font-size: 2.5rem;
+            margin-bottom: 1rem;
+        }
+
+        .subtitle {
+            font-size: 1.2rem;
+            opacity: 0.9;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 2rem auto;
+            padding: 0 2rem;
+        }
+
+        .prediction-grid {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 2rem;
+        }
+
+        @media (min-width: 768px) {
+            .prediction-grid {
+                grid-template-columns: 300px 1fr;
+            }
+        }
+
+        .sidebar {
+            background: white;
+            border-radius: 10px;
+            padding: 1.5rem;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+            height: fit-content;
+        }
+
+        .sidebar-title {
+            font-size: 1.2rem;
+            margin-bottom: 1rem;
+            color: var(--primary-color);
+            border-bottom: 2px solid var(--light-color);
+            padding-bottom: 0.5rem;
+        }
+
+        .filter-group {
+            margin-bottom: 1.5rem;
+        }
+
+        .filter-label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 600;
+        }
+
+        .filter-select {
+            width: 100%;
+            padding: 0.7rem;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            background-color: white;
+        }
+
+        .submit-prediction {
+            background-color: var(--accent-color);
+            color: white;
+            border: none;
+            border-radius: 5px;
+            padding: 0.8rem 1.5rem;
+            font-weight: 600;
+            cursor: pointer;
+            width: 100%;
+            margin-top: 0.5rem;
+        }
+
+        .submit-prediction:hover {
+            background-color: #0ca678;
+        }
+
+        .trending-predictions {
+            margin-top: 2rem;
+        }
+
+        .trending-item {
+            display: flex;
+            align-items: center;
+            gap: 0.8rem;
+            padding: 0.7rem 0;
+            border-bottom: 1px solid var(--light-color);
+        }
+
+        .trending-team {
+            font-weight: 600;
+            color: var(--primary-color);
+        }
+
+        .predictions-feed {
+            display: flex;
+            flex-direction: column;
+            gap: 1.5rem;
+        }
+
+        .prediction-card {
+            background-color: white;
+            border-radius: 10px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+            padding: 1.5rem;
+            transition: transform 0.2s;
+        }
+
+        .prediction-card:hover {
+            transform: translateY(-3px);
+        }
+
+        .prediction-header {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 1rem;
+        }
+
+        .user-info {
+            display: flex;
+            align-items: center;
+            gap: 0.8rem;
+        }
+
+        .user-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            overflow: hidden;
+        }
+
+        .user-avatar img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .user-details {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .username {
+            font-weight: 600;
+        }
+
+        .user-title {
+            font-size: 0.8rem;
+            color: #666;
+        }
+
+        .prediction-time {
+            color: #666;
+            font-size: 0.9rem;
+        }
+
+        .prediction-content {
+            margin: 1rem 0;
+        }
+
+        .predicted-match {
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+        }
+
+        .predicted-team {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.5rem 1rem;
+            background-color: rgba(16, 185, 129, 0.1);
+            border-radius: 20px;
+            font-weight: 600;
+            color: var(--success-color);
+        }
+
+        .team-icon {
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            overflow: hidden;
+        }
+
+        .team-icon img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .ball-prediction-group {
+            background-color: #f0f0f0;
+            padding: 15px;
+            border-radius: 5px;
+            margin-bottom: 15px;
+        }
+        
+        .ball-prediction-type {
+            width: 100%;
+            padding: 8px;
+            border-radius: 4px;
+            border: 1px solid #ddd;
+        }
+        
+        .prediction-reason {
+            margin-top: 1rem;
+            padding: 1rem;
+            background-color: var(--light-color);
+            border-radius: 8px;
+            font-size: 0.95rem;
+        }
+
+        .prediction-stats {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 1rem;
+            color: #666;
+            font-size: 0.9rem;
+        }
+
+        .confidence-meter {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .confidence-level {
+            height: 6px;
+            width: 100px;
+            background-color: #ddd;
+            border-radius: 3px;
+            overflow: hidden;
+        }
+
+        .confidence-fill {
+            height: 100%;
+            background-color: var(--secondary-color);
+            width: 80%;
+        }
+
+        .prediction-actions {
+            display: flex;
+            gap: 1rem;
+            margin-top: 1rem;
+        }
+
+        .like-button, .comment-button {
+            display: flex;
+            align-items: center;
+            gap: 0.3rem;
+            background: none;
+            border: none;
+            color: #666;
+            cursor: pointer;
+            font-size: 0.9rem;
+        }
+
+        .like-button:hover, .comment-button:hover {
+            color: var(--primary-color);
+        }
+
+        .active-like {
+            color: var(--danger-color);
+        }
+
+        .comment-section {
+            margin-top: 1rem;
+            border-top: 1px solid var(--light-color);
+            padding-top: 1rem;
+            display: none;
+        }
+
+        .comment-form {
+            display: flex;
+            gap: 0.5rem;
+            margin-top: 1rem;
+        }
+
+        .comment-input {
+            flex: 1;
+            padding: 0.7rem;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+        }
+
+        .comment-submit {
+            background-color: var(--primary-color);
+            color: white;
+            border: none;
+            border-radius: 5px;
+            padding: 0 1rem;
+            cursor: pointer;
+        }
+
+        .comments-list {
+            margin-top: 1rem;
+            display: flex;
+            flex-direction: column;
+            gap: 0.8rem;
+        }
+
+        .comment-item {
+            display: flex;
+            gap: 0.8rem;
+            padding: 0.5rem;
+            background-color: var(--light-color);
+            border-radius: 8px;
+        }
+
+        .comment-avatar {
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            overflow: hidden;
+            flex-shrink: 0;
+        }
+
+        .comment-avatar img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .comment-content {
+            font-size: 0.9rem;
+        }
+
+        .comment-author {
+            font-weight: 600;
+            margin-bottom: 0.2rem;
+        }
+
+        .prediction-modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            z-index: 1000;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .modal-content {
+            background-color: white;
+            width: 90%;
+            max-width: 600px;
+            border-radius: 10px;
+            padding: 2rem;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.5rem;
+        }
+
+        .modal-title {
+            font-size: 1.5rem;
+            color: var(--primary-color);
+        }
+
+        .close-modal {
+            background: none;
+            border: none;
+            font-size: 1.5rem;
+            cursor: pointer;
+            color: #666;
+        }
+
+        .modal-form {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+
+        .form-label {
+            font-weight: 600;
+        }
+
+        .form-select, .form-input, .form-textarea {
+            padding: 0.8rem;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            font-size: 1rem;
+            transition: border-color 0.3s;
+        }
+
+        .form-textarea {
+            resize: vertical;
+            min-height: 100px;
+        }
+
+        .form-select:focus, .form-input:focus, .form-textarea:focus {
+            outline: none;
+            border-color: var(--primary-color);
+        }
+
+        .form-submit {
+            background-color: var(--accent-color);
+            color: white;
+            border: none;
+            border-radius: 5px;
+            padding: 1rem;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            margin-top: 1rem;
+        }
+
+        .form-submit:hover {
+            background-color: #0ca678;
+        }
+
+        .loader {
+            border: 5px solid #f3f3f3;
+            border-top: 5px solid var(--primary-color);
+            border-radius: 50%;
+            width: 50px;
+            height: 50px;
+            animation: spin 1s linear infinite;
+            margin: 2rem auto;
+            display: none;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        footer {
+            background-color: var(--dark-color);
+            color: white;
+            padding: 2rem 0;
+            text-align: center;
+            margin-top: 3rem;
+        }
+
+        .footer-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 2rem;
+        }
+
+        .social-links {
+            display: flex;
+            justify-content: center;
+            gap: 1rem;
+            margin-top: 1rem;
+        }
+
+        .social-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background-color: rgba(255, 255, 255, 0.1);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: background-color 0.3s;
+        }
+
+        .social-icon:hover {
+            background-color: rgba(255, 255, 255, 0.2);
+        }
+
+        .auth-buttons {
+            margin-top: 1rem;
+            display: flex;
+            gap: 1rem;
+            justify-content: center;
+        }
+
+        .auth-btn {
+            padding: 0.6rem 1.2rem;
+            background-color: var(--secondary-color);
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: opacity 0.2s;
+        }
+
+        .auth-btn:hover {
+            opacity: 0.9;
+        }
+
+        .wcl-schedule {
+            max-width: 1200px;
+            margin: 1rem auto;
+            padding: 1rem 2rem;
+            background: #f0f8ff;
+            border-radius: 8px;
+        }
+
+        .schedule-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 1rem;
+            margin-top: 1rem;
+        }
+
+        .match-item {
+            background: white;
+            padding: 1rem;
+            border-radius: 5px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .match-item button {
+            padding: 0.5rem 1rem;
+            background-color: var(--secondary-color);
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+
+        #user-login-btn, #user-register-btn {
+            background-color: var(--primary-color);
+        }
+
+        #admin-login-btn {
+            background-color: var(--danger-color);
+        }
+
+        /* Live matches styling */
+        .live-matches-container {
+            max-width: 1200px;
+            margin: 1rem auto 0;
+            padding: 0 2rem;
+            background: #000;
+            color: lime;
+            border: 1px solid #333;
+            font-family: 'Courier New', monospace;
+            text-transform: uppercase;
+        }
+
+        .live-matches-title {
+            color: lime;
+            padding: 1rem;
+            border-bottom: 1px solid #333;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .blinking-dot {
+            height: 10px;
+            width: 10px;
+            background-color: red;
+            border-radius: 50%;
+            animation: blink 1s infinite;
+        }
+
+        @keyframes blink {
+            0% { opacity: 1; }
+            50% { opacity: 0; }
+            100% { opacity: 1; }
+        }
+
+        #live-matches {
+            padding: 1rem;
+            font-size: 0.9rem;
+        }
+
+        .live-match {
+            display: grid;
+            grid-template-columns: 1fr auto;
+            gap: 1rem;
+            padding: 0.5rem 0;
+            border-bottom: 1px dashed #333;
+        }
+
+        /* Hacker-style prediction popup */
+        .prediction-popup {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background: black;
+            border: 1px solid lime;
+            color: lime;
+            padding: 1rem;
+            font-family: 'Courier New', monospace;
+            z-index: 1000;
+            display: none;
+            max-width: 300px;
+            animation: blink-border 2s infinite;
+        }
+
+        @keyframes blink-border {
+            0% { border-color: lime; }
+            50% { border-color: red; }
+            100% { border-color: lime; }
+        }
+    </style>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+<body>
+    <header>
+        <div class="header-content">
+            <h1>Community Cricket Predictions</h1>
+            <p class="subtitle">Share your predictions and see what others are forecasting</p>
+            <div class="auth-buttons">
+                <button id="user-login-btn" class="auth-btn">Login</button> 
+                <button id="user-register-btn" class="auth-btn">Register</button>
+                <button id="admin-login-btn" class="auth-btn">Admin Login</button>
+                <form id="admin-login-form" style="display:none">
+                    <input type="password" id="admin-password" placeholder="Admin Password">
+                    <button type="submit">Login</button>
+                </form>
+            </div>
+        </div>
+    </header>
+
+    <div class="wcl-schedule">
+        <h2>World Championship of Legends Schedule</h2>
+        <div class="schedule-grid">
+            <div class="match-item">
+                <span>Jul 3: India vs Australia</span>
+                <button>Predict</button>
+            </div>
+            <div class="match-item">
+                <span>Jul 5: England vs New Zealand</span>
+                <button>Predict</button>
+            </div>
+            <!-- Add other schedule items here -->
+        </div>
+    </div>
+
+    <div class="live-matches-container">
+        <h2 class="live-matches-title">Live Matches <span class="blinking-dot"></span></h2>
+        <div id="live-matches">
+            <!-- Live matches will be loaded here dynamically -->
+        </div>
+    </div>
+
+    <div class="container">
+        <div class="prediction-grid">
+            <aside class="sidebar">
+                <h3 class="sidebar-title">Filters</h3>
+                <div class="filter-group">
+                    <label for="match-filter" class="filter-label">Match</label>
+                    <select id="match-filter" class="filter-select">
+                        <option value="all">All Matches</option>
+                        <option value="india-australia">India vs Australia</option>
+                        <option value="england-newzealand">England vs New Zealand</option>
+                        <option value="pakistan-southafrica">Pakistan vs South Africa</option>
+                        <option value="wc-india-australia">India vs Australia (World Championship)</option>
+                        <option value="wc-england-newzealand">England vs New Zealand (World Championship)</option> 
+                        <option value="wc-pakistan-southafrica">Pakistan vs South Africa (World Championship)</option>
+                        <option value="wc-westindies-sl">West Indies vs Sri Lanka (World Championship)</option>
+                        <option value="wc-india-england">India vs England (World Championship)</option>
+                        <option value="wc-australia-pakistan">Australia vs Pakistan (World Championship)</option>
+                        <option value="wc-semis1">World Championship Semi-Final 1</option>
+                        <option value="wc-semis2">World Championship Semi-Final 2</option>
+                        <option value="wc-final">World Championship Final</option>
+                    </select>
+                </div>
+                <div class="filter-group">
+                    <label for="team-filter" class="filter-label">Team</label>
+                    <select id="team-filter" class="filter-select">
+                        <option value="all">All Teams</option>
+                        <option value="india">India</option>
+                        <option value="australia">Australia</option>
+                        <option value="england">England</option>
+                        <option value="newzealand">New Zealand</option>
+                    </select>
+                </div>
+
+                <button class="submit-prediction" id="open-prediction-modal" style="display:none">
+                    <i class="fas fa-plus"></i> Submit Prediction (Admin Only)
+                </button>
+
+                <div class="personal-predictions" id="personal-predictions" style="display: none;">
+                    <h3 class="sidebar-title">My Predictions</h3>
+                    <div id="user-predictions-list"></div>
+                </div>
+
+                <div class="trending-predictions">
+                    <h3 class="sidebar-title">Trending Predictions</h3>
+                    <div class="trending-item">
+                        <div class="team-icon">
+                            <img src="https://storage.googleapis.com/workspace-0f70711f-8b4e-4d94-86f1-2a93ccde5887/image/8ed7a393-189a-47f2-a605-9edfc2b0a3f4.png" alt="India cricket team logo">
+                        </div>
+                        <span class="trending-team">India to win</span>
+                        <span class="trending-count">(42 predictions)</span>
+                    </div>
+                    <div class="trending-item">
+                        <div class="team-icon">
+                            <img src="https://storage.googleapis.com/workspace-0f70711f-8b4e-4d94-86f1-2a93ccde5887/image/f27e1f25-bced-4d78-b370-cc689e968698.png" alt="Australia cricket team logo">
+                        </div>
+                        <span class="trending-team">Australia by 30+ runs</span>
+                        <span class="trending-count">(18 predictions)</span>
+                    </div>
+                    <div class="trending-item">
+                        <div class="team-icon">
+                            <img src="https://storage.googleapis.com/workspace-0f70711f-8b4e-4d94-86f1-2a93ccde5887/image/f3152f7f-acc0-4ab1-a541-f8c44c8ef744.png" alt="India cricket team logo">
+                        </div>
+                        <span class="trending-team">Kohli to score century</span>
+                        <span class="trending-count">(31 predictions)</span>
+                    </div>
+                </div>
+            </aside>
+
+            <main class="predictions-feed">
+                <!-- Prediction cards will be loaded here -->
+                <div class="prediction-card">
+                    <div class="prediction-header">
+                        <div class="user-info">
+                            <div class="user-avatar">
+                                <img src="https://storage.googleapis.com/workspace-0f70711f-8b4e-4d94-86f1-2a93ccde5887/image/a2874676-4a26-4fca-a814-c5bba11311ec.png" alt="User avatar for CricketExpert22">
+                            </div>
+                            <div class="user-details">
+                                <span class="username">CricketExpert22</span>
+                                <span class="user-title">Verified Analyst</span>
+                            </div>
+                        </div>
+                        <span class="prediction-time">2 hours ago</span>
+                    </div>
+                    <div class="prediction-content">
+                        <div class="predicted-match">India vs Australia • 25th May</div>
+                        <div class="predicted-team">
+                            <div class="team-icon">
+                                <img src="https://storage.googleapis.com/workspace-0f70711f-8b4e-4d94-86f1-2a93ccde5887/image/4c397583-0391-4c24-8f0a-902575f59a97.png" alt="India cricket team logo">
+                            </div>
+                            India to win by 40-60 runs
+                        </div>
+                        <div class="prediction-reason">
+                            "India's top order is in excellent form and Australia's bowling attack struggles on Mumbai's pitch which favors spinners. Expect Jadeja to take 3+ wickets."
+                        </div>
+                    </div>
+                    <div class="prediction-stats">
+                        <div class="confidence-meter">
+                            <span>Confidence:</span>
+                            <div class="confidence-level">
+                                <div class="confidence-fill" style="width: 90%;"></div>
+                            </div>
+                            <span>9/10</span>
+                        </div>
+                        <div class="accuracy-rate">Previous accuracy: 78%</div>
+                    </div>
+                    <div class="prediction-actions">
+                        <button class="like-button">
+                            <i class="far fa-thumbs-up"></i>
+                            <span>24</span>
+                        </button>
+                        <button class="comment-button">
+                            <i class="far fa-comment"></i>
+                            <span>8</span>
+                        </button>
+                    </div>
+                    <div class="comment-section">
+                        <div class="comment-form">
+                            <input type="text" class="comment-input" placeholder="Add your comment...">
+                            <button class="comment-submit">Post</button>
+                        </div>
+                        <div class="comments-list">
+                            <div class="comment-item">
+                                <div class="comment-avatar">
+                                    <img src="https://storage.googleapis.com/workspace-0f70711f-8b4e-4d94-86f1-2a93ccde5887/image/a83573c5-d123-4e66-8984-adcda5a1c406.png" alt="User avatar for Fan123">
+                                </div>
+                                <div class="comment-content">
+                                    <div class="comment-author">Fan123</div>
+                                    <div>I agree! Jadeja has been exceptional this season</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="prediction-card">
+                    <div class="prediction-header">
+                        <div class="user-info">
+                            <div class="user-avatar">
+                                <img src="https://storage.googleapis.com/workspace-0f70711f-8b4e-4d94-86f1-2a93ccde5887/image/64d0b16e-10e6-4247-aaee-58f7670c1c1a.png" alt="User avatar for AussieSupporter">
+                            </div>
+                            <div class="user-details">
+                                <span class="username">AussieSupporter</span>
+                                <span class="user-title">Fan Since 2011</span>
+                            </div>
+                        </div>
+                        <span class="prediction-time">5 hours ago</span>
+                    </div>
+                    <div class="prediction-content">
+                        <div class="predicted-match">India vs Australia • 25th May</div>
+                        <div class="predicted-team">
+                            <div class="team-icon">
+                                <img src="https://storage.googleapis.com/workspace-0f70711f-8b4e-4d94-86f1-2a93ccde5887/image/bfe95518-aaa5-4361-9bd9-6ac927fc56fd.png" alt="Australia cricket team logo">
+                            </div>
+                            Australia to chase down any target
+                        </div>
+                        <div class="prediction-reason">
+                            "People are underestimating Warner's return to form. He performs exceptionally in high-pressure matches and Mumbai's short boundaries suit his style."
+                        </div>
+                    </div>
+                    <div class="prediction-stats">
+                        <div class="confidence-meter">
+                            <span>Confidence:</span>
+                            <div class="confidence-level">
+                                <div class="confidence-fill" style="width: 70%;"></div>
+                            </div>
+                            <span>7/10</span>
+                        </div>
+                        <div class="accuracy-rate">Previous accuracy: 65%</div>
+                    </div>
+                    <div class="prediction-actions">
+                        <button class="like-button">
+                            <i class="far fa-thumbs-up"></i>
+                            <span>12</span>
+                        </button>
+                        <button class="comment-button">
+                            <i class="far fa-comment"></i>
+                            <span>5</span>
+                        </button>
+                    </div>
+                    <div class="comment-section">
+                        <div class="comment-form">
+                            <input type="text" class="comment-input" placeholder="Add your comment...">
+                            <button class="comment-submit">Post</button>
+                        </div>
+                        <div class="comments-list">
+                            <!-- Comments would appear here -->
+                        </div>
+                    </div>
+                </div>
+
+                <div class="prediction-card">
+                    <div class="prediction-header">
+                        <div class="user-info">
+                            <div class="user-avatar">
+                                <img src="https://storage.googleapis.com/workspace-0f70711f-8b4e-4d94-86f1-2a93ccde5887/image/6fcfecd2-31de-46b7-9c61-b3666d8333f9.png" alt="User avatar for StatsGuru">
+                            </div>
+                            <div class="user-details">
+                                <span class="username">StatsGuru</span>
+                                <span class="user-title">Data Analyst</span>
+                            </div>
+                        </div>
+                        <span class="prediction-time">1 day ago</span>
+                    </div>
+                    <div class="prediction-content">
+                        <div class="predicted-match">India vs Australia • 25th May</div>
+                        <div class="predicted-team">
+                            <div class="team-icon">
+                                <img src="https://storage.googleapis.com/workspace-0f70711f-8b4e-4d94-86f1-2a93ccde5887/image/64d4fc84-c859-4c8b-8567-7a297a3bd2ad.png" alt="India cricket team logo">
+                            </div>
+                            India to win toss and match
+                        </div>
+                        <div class="prediction-reason">
+                            "Historical data from last 10 matches at this ground shows team batting first wins 70% of matches. India has won 8 of last 10 tosses against Australia."
+                        </div>
+                    </div>
+                    <div class="prediction-stats">
+                        <div class="confidence-meter">
+                            <span>Confidence:</span>
+                            <div class="confidence-level">
+                                <div class="confidence-fill" style="width: 85%;"></div>
+                            </div>
+                            <span>8.5/10</span>
+                        </div>
+                        <div class="accuracy-rate">Previous accuracy: 82%</div>
+                    </div>
+                    <div class="prediction-actions">
+                        <button class="like-button">
+                            <i class="far fa-thumbs-up"></i>
+                            <span>36</span>
+                        </button>
+                        <button class="comment-button">
+                            <i class="far fa-comment"></i>
+                            <span>14</span>
+                        </button>
+                    </div>
+                    <div class="comment-section">
+                        <div class="comment-form">
+                            <input type="text" class="comment-input" placeholder="Add your comment...">
+                            <button class="comment-submit">Post</button>
+                        </div>
+                        <div class="comments-list">
+                            <div class="comment-item">
+                                <div class="comment-avatar">
+                                    <img src="https://storage.googleapis.com/workspace-0f70711f-8b4e-4d94-86f1-2a93ccde5887/image/907aff23-5dc3-4c69-adbb-e92f85c82450.png" alt="User avatar for CricketFan101">
+                                </div>
+                                <div class="comment-content">
+                                    <div class="comment-author">CricketFan101</div>
+                                    <div>Great stats! Didn't realize the toss was so important here</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </main>
+        </div>
+    </div>
+
+    <!-- Registration Modal -->
+    <div class="prediction-modal" id="registration-modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 class="modal-title">Register Account</h3>
+                <button class="close-modal" id="close-registration-modal">&times;</button>
+            </div>
+            <form id="registration-form" class="modal-form">
+                <div class="form-group">
+                    <label for="register-email" class="form-label">Email</label>
+                    <input type="email" id="register-email" class="form-input" required placeholder="Your email">
+                </div>
+                <div class="form-group">
+                    <label for="register-password" class="form-label">Password</label>
+                    <input type="password" id="register-password" class="form-input" required placeholder="Create password">
+                </div>
+                <div class="form-group">
+                    <label for="register-confirm" class="form-label">Confirm Password</label>
+                    <input type="password" id="register-confirm" class="form-input" required placeholder="Confirm password">
+                </div>
+                <button type="submit" class="form-submit">Register</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Prediction Submission Modal -->
+    <div class="prediction-modal" id="prediction-modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 class="modal-title">Submit Your Prediction</h3>
+                <button class="close-modal" id="close-prediction-modal">&times;</button>
+            </div>
+            <form id="prediction-form" class="modal-form">
+                <div class="form-group">
+                    <label for="match" class="form-label">Match</label>
+                    <select id="match" class="form-select" required>
+                        <option value="">Select a match</option>
+                        <option value="india-australia">India vs Australia - May 25</option>
+                        <option value="england-newzealand">England vs New Zealand - May 28</option>
+                        <option value="pakistan-southafrica">Pakistan vs South Africa - May 30</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="prediction-type" class="form-label">Prediction Type</label>
+                    <select id="prediction-type" class="form-select" required>
+                        <option value="">Select prediction type</option>
+                        <option value="winner">Match Winner</option>
+                        <option value="tournament-winner">Tournament Winner Prediction</option>
+                        <option value="most-runs">Tournament Most Runs</option>
+                        <option value="most-wickets">Tournament Most Wickets</option>
+                        <option value="runs">Winning Margin (Runs)</option>
+                        <option value="wickets">Winning Margin (Wickets)</option>
+                        <option value="century">Player Century</option>
+                        <option value="ball-by-ball">Ball-by-Ball Prediction</option>
+                    </select>
+                </div>
+                <div class="form-group" id="team-prediction-group">
+                    <label for="predicted-team" class="form-label">Predicted Team</label>
+                    <select id="predicted-team" class="form-select">
+                        <option value="">Select team</option>
+                        <option value="india">India</option>
+                        <option value="australia">Australia</option>
+                    </select>
+                </div>
+                <div class="form-group" id="player-prediction-group" style="display: none;">
+                    <label for="predicted-player" class="form-label">Predicted Player</label>
+                    <select id="predicted-player" class="form-select">
+                        <option value="">Select player</option>
+                        <option value="virat">Virat Kohli</option>
+                        <option value="rohit">Rohit Sharma</option>
+                        <option value="warner">David Warner</option>
+                        <option value="smith">Steve Smith</option>
+                    </select>
+                </div>
+                <div class="form-group" id="ball-prediction-group" style="display: none;">
+                    <label class="form-label">Bowler's Next Ball</label>
+                    <select id="ball-prediction-type" class="form-select">
+                        <option value="">Select ball type</option>
+                        <option value="dot">Dot Ball</option> 
+                        <option value="single">1 Run</option>
+                        <option value="double">2 Runs</option>
+                        <option value="boundary">Boundary (4)</option>
+                        <option value="six">Six (6)</option>
+                        <option value="wicket">Wicket</option>
+                    </select>
+                </div>
+                
+                <div class="form-group" id="margin-prediction-group" style="display: none;">
+                    <label for="winning-margin" class="form-label">Winning Margin</label>
+                    <input type="text" id="winning-margin" class="form-input" placeholder="e.g. 30 runs or 5 wickets">
+                </div>
+                <div class="form-group">
+                    <label for="confidence" class="form-label">Your Confidence (1-10)</label>
+                    <input type="number" id="confidence" class="form-input" min="1" max="10" required placeholder="How confident are you?">
+                </div>
+                <div class="form-group">
+                    <label for="prediction-reason" class="form-label">Reasoning</label>
+                    <textarea id="prediction-reason" class="form-textarea" placeholder="Explain why you think this will happen..."></textarea>
+                </div>
+                <div class="form-group" id="toss-prediction-group" style="display: none;">
+                    <label for="toss-prediction" class="form-label">Toss Prediction (Fixed)</label>
+                    <select id="toss-prediction" class="form-select">
+                        <option value="">Select team</option>
+                        <option value="india">India</option>
+                        <option value="australia">Australia</option>
+                        <option value="england">England</option>
+                        <option value="other">Other</option>
+                    </select>
+                </div>
+                
+                <button type="submit" class="form-submit">Submit Prediction</button>
+            </form>
+        </div>
+    </div>
+
+    <div class="prediction-popup" id="prediction-popup">
+        <h3>New Prediction Available!</h3>
+        <p>You have <span id="countdown">60</span> seconds to submit your prediction for this match</p>
+        <button id="quick-predict-btn">QUICK PREDICT NOW</button>
+    </div>
+
+    <footer>
+        <div class="footer-content">
+            <p>Cricket Prediction Community &copy; 2023</p>
+            <div class="social-links">
+                <a href="#" class="social-icon"><i class="fab fa-twitter"></i></a>
+                <a href="#" class="social-icon"><i class="fab fa-facebook"></i></a>
+                <a href="#" class="social-icon"><i class="fab fa-instagram"></i></a>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // Auth functionality
+        const ADMIN_PASSWORD = "Anand2009"; // Set admin password
+        let isAdminLoggedIn = false;
+        let isRegularUserLoggedIn = false;
+        let registeredUsers = [];
+
+        document.getElementById('admin-login-btn').addEventListener('click', () => {
+            document.getElementById('admin-login-form').style.display = 'block';
+        });
+
+        document.getElementById('admin-login-form').addEventListener('submit', (e) => {
+            e.preventDefault();
+            const password = document.getElementById('admin-password').value;
+            
+            if(password === ADMIN_PASSWORD) {
+                isAdminLoggedIn = true;
+                alert('Admin login successful!');
+                document.getElementById('open-prediction-modal').style.display = 'block';
+                document.getElementById('admin-login-form').style.display = 'none';
+            } else {
+                alert('Invalid admin password!');
+            }
+            document.getElementById('admin-password').value = '';
+        });
+
+        // Functionality for the prediction submission modal
+        const predictionModal = document.getElementById('prediction-modal');
+        const openModalBtn = document.getElementById('open-prediction-modal');
+        const closeModalBtn = document.getElementById('close-prediction-modal');
+        const predictionType = document.getElementById('prediction-type');
+        const teamPredictionGroup = document.getElementById('team-prediction-group');
+        const playerPredictionGroup = document.getElementById('player-prediction-group');
+        const marginPredictionGroup = document.getElementById('margin-prediction-group');
+        const ballPredictionGroup = document.getElementById('ball-prediction-group');
+
+        // Open modal
+        openModalBtn.addEventListener('click', () => {
+            if(!isAdminLoggedIn) {
+                alert('Only admin can submit predictions!');
+                return;
+            }
+            predictionModal.style.display = 'flex';
+            document.body.style.overflow = 'hidden';
+        });
+
+        // Close modal
+        closeModalBtn.addEventListener('click', () => {
+            predictionModal.style.display = 'none';
+            document.body.style.overflow = 'auto';
+        });
+
+        // Close modal when clicking outside
+        predictionModal.addEventListener('click', (e) => {
+            if (e.target === predictionModal) {
+                predictionModal.style.display = 'none';
+                document.body.style.overflow = 'auto';
+            }
+        });
+
+        // Handle prediction type changes
+        predictionType.addEventListener('change', (e) => {
+            const value = e.target.value;
+            
+            // Reset all groups
+            teamPredictionGroup.style.display = 'none';
+            playerPredictionGroup.style.display = 'none';
+            marginPredictionGroup.style.display = 'none';
+            
+            // Show relevant group based on selection
+            if (value === 'winner') {
+                teamPredictionGroup.style.display = 'block';
+            } else if (value === 'century') {
+                playerPredictionGroup.style.display = 'block';
+            } else if (value === 'runs' || value === 'wickets') {
+                teamPredictionGroup.style.display = 'block';
+                marginPredictionGroup.style.display = 'block';
+                ballPredictionGroup.style.display = 'none';
+            } else if (value === 'ball-by-ball') {
+                ballPredictionGroup.style.display = 'block';
+                tossPredictionGroup.style.display = 'block';
+                teamPredictionGroup.style.display = 'none';
+                marginPredictionGroup.style.display = 'none';
+            } else if (value.includes('wc-')) {
+                // World Championship matches get special toss prediction
+                tossPredictionGroup.style.display = 'block';
+                $('select[name=toss-prediction]').attr('disabled', false);
+                teamPredictionGroup.style.display = 'none';
+                marginPredictionGroup.style.display = 'none';
+                marginPredictionGroup.querySelector('label').textContent = 
+                    value === 'runs' ? 'Winning Margin (Runs)' : 'Winning Margin (Wickets)';
+                document.getElementById('winning-margin').placeholder = 
+                    value === 'runs' ? 'e.g. 30 runs' : 'e.g. 5 wickets';
+            }
+        });
+
+        // Handle form submission
+        document.getElementById('prediction-form').addEventListener('submit', (e) => {
+            e.preventDefault();
+            
+            // Show loading state
+            const submitBtn = e.target.querySelector('button[type="submit"]');
+            const originalText = submitBtn.textContent;
+            submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Submitting...';
+            submitBtn.disabled = true;
+            
+            // In a real app, you would send this data to your backend
+            setTimeout(() => {
+                // Hide modal and reset form
+                predictionModal.style.display = 'none';
+                document.body.style.overflow = 'auto';
+                e.target.reset();
+                submitBtn.textContent = originalText;
+                submitBtn.disabled = false;
+                
+                // Show success message (in a real app, you would add the new prediction to the feed)
+                alert('Your prediction has been submitted successfully!');
+            }, 1500);
+        });
+
+        // Comment functionality
+        const commentButtons = document.querySelectorAll('.comment-button');
+        commentButtons.forEach(button => {
+            button.addEventListener('click', () => {
+                const commentSection = button.closest('.prediction-card').querySelector('.comment-section');
+                commentSection.style.display = commentSection.style.display === 'block' ? 'none' : 'block';
+            });
+        });
+
+        // Like functionality
+        const likeButtons = document.querySelectorAll('.like-button');
+        likeButtons.forEach(button => {
+            button.addEventListener('click', () => {
+                const icon = button.querySelector('i');
+                const count = button.querySelector('span');
+                
+                if (button.classList.contains('active-like')) {
+                    // Unlike
+                    icon.classList.remove('fas');
+                    icon.classList.add('far');
+                    button.classList.remove('active-like');
+                    count.textContent = parseInt(count.textContent) - 1;
+                } else {
+                    // Like
+                    icon.classList.remove('far');
+                    icon.classList.add('fas');
+                    button.classList.add('active-like');
+                    count.textContent = parseInt(count.textContent) + 1;
+                }
+            });
+        });
+
+        // Match filter functionality
+        document.getElementById('match-filter').addEventListener('change', (e) => {
+            console.log('Filtering by match:', e.target.value);
+            // In a real app, you would filter the predictions here
+        });
+
+        // Team filter functionality
+        document.getElementById('team-filter').addEventListener('change', (e) => {
+            console.log('Filtering by team:', e.target.value);
+            // In a real app, you would filter the predictions here
+        });
+
+        // Show prediction popup for logged in users
+        function showPredictionPopup() {
+            if (users.length > 0) { // Check if someone is logged in
+                const popup = document.getElementById('prediction-popup');
+                popup.style.display = 'block';
+                
+                // Start 60 second countdown
+                let seconds = 60;
+                const countdown = document.getElementById('countdown');
+                const timer = setInterval(() => {
+                    seconds--;
+                    countdown.textContent = seconds;
+                    if (seconds <= 0) {
+                        clearInterval(timer);
+                        popup.style.display = 'none';
+                    }
+                }, 1000);
+            }
+        }
+
+        // WCL Schedule prediction handlers
+        document.querySelectorAll('.match-item button').forEach(button => {
+            button.addEventListener('click', () => {
+                if(!isRegularUserLoggedIn) {
+                    alert('Please login first!');
+                    return;
+                }
+                const matchName = button.parentElement.querySelector('span').textContent;
+                document.getElementById('prediction-form').scrollIntoView();
+            });
+        });
+
+        // Regular user auth handlers
+        document.getElementById('user-login-btn').addEventListener('click', () => {
+            const email = prompt("Enter your registered email:");
+            const user = registeredUsers.find(u => u.email === email);
+            if (user) {
+                isRegularUserLoggedIn = true;
+                alert("Logged in successfully!");
+            } else {
+                alert("User not found. Please register first.");
+            }
+        });
+
+        document.getElementById('user-register-btn').addEventListener('click', () => {
+            const email = prompt("Enter your email to register:");
+            if (email) {
+                registeredUsers.push({email});
+                alert("Registration successful!");
+                isRegularUserLoggedIn = true;
+            }
+        });
+
+        // Trigger popup after 5 seconds (demo)
+        setTimeout(showPredictionPopup, 5000);
+
+        // Quick predict button handler
+        document.getElementById('quick-predict-btn').addEventListener('click', () => {
+            document.getElementById('prediction-popup').style.display = 'none';
+            document.getElementById('open-prediction-modal').click();
+        });
+    </script>
+</body>
+</html>
